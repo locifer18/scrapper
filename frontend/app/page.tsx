@@ -27,12 +27,12 @@ export default function Home() {
     setError('');
 
     try {
-      const response = await fetch('/api/generate-md', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/generate-md`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ data: userInput }),
+        body: JSON.stringify({ company: userInput }),
       });
 
       if (!response.ok) {
@@ -104,7 +104,7 @@ export default function Home() {
             <textarea
               value={userInput}
               onChange={(e) => setUserInput(e.target.value)}
-              placeholder='e.g. "Analyze user requirements for dashboard"'
+              placeholder='e.g. "Google, Microsoft, Amazon..."'
               className="w-full p-3 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 text-black transition-shadow shadow-sm mt-4"
             />
           </div>
