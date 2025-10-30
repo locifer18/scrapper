@@ -5,32 +5,51 @@ const ai = new GoogleGenAI({
 });
 
 export const generateMarkdownWithGemini = async (
-  company: any
-): Promise<any> => {
+  data: any
+): Promise<string> => {
   const prompt = `
-  Draft a comprehensive Markdown summary for the company named '${company}'. The summary must be generated after performing a search on the company to gather up-to-date information. Format the output strictly as follows:
+You are a technical writer.  
+Generate a well-structured Markdown report from the following JSON data.
 
-1.  Use the company name as the main heading (#).
-2.  Include a subheading 'Description' (## Description) with a concise overview of what the company does, its sector, and global standing.
-3.  Finally, include a subheading 'Key Offerings' (## Key Offerings) with a bulleted list of 3-5 of their main services, products, or business segments.
+The JSON:
+${JSON.stringify(data, null, 2)}
 
-**Example of the desired output format:**
+### Formatting Instructions:
+- Start with a top-level title: **"Data Insights Report"**
+- For each object in the JSON array:
+  - Use the \`name\` as an **H2 heading** (\`##\`)
+  - Add a short **summary paragraph**
+  - Create a **"Highlights"** section as a bulleted list from the \`highlights\` array
+  - Add a **Popularity** line in bold, e.g., \`**Popularity:** High\`
+- Separate each item with a horizontal line (\`---\`)
+- Use proper Markdown syntax (headings, lists, bold text)
+- Output **only valid Markdown**, no explanations or extra text.
 
-# [Example Company Name]
-## Description
-[Example Company] is a multinational corporation specializing in [Industry/Sector]. It is known globally for [Key characteristic] and operates in [Number] countries. Its primary focus is on [Main Business Area].
+Example output format:
 
-## Key Offerings
-* [Main Product/Service 1]
-* [Main Product/Service 2]
-* [Main Product/Service 3]
-* [Main Product/Service 4]
-  `;
+# Data Insights Report
+
+## Example Name
+**Popularity:** High
+
+**Summary:**  
+Short paragraph summarizing the content.
+
+**Highlights:**
+- Point 1
+- Point 2
+- Point 3
+
+---
+
+Return only the Markdown content.
+`;
 
   const response = await ai.models.generateContent({
     model: "gemini-2.5-flash",
     contents: prompt,
   });
 
-  return response.text;
+  // Depending on SDK version, you may need: response.output_text or response.candidates[0].content.parts[0].text
+  return response.text || "No content generated.";
 };
